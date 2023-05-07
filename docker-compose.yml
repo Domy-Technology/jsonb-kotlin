@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  example-postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "example-db-pass"
+      POSTGRES_DB: "example_db"
+    ports:
+      - "15432:5432"
+    volumes:
+      #Descomente a linha abaixo caso queira que os dados sejam persistentes
+      #- ./database:/var/lib/postgresql/data
+      - ./assets/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - example-postgres-network
+
+  example-pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@example.com.br"
+      PGADMIN_DEFAULT_PASSWORD: "exampleAdmin2020!"
+    ports:
+      - "16543:80"
+    depends_on:
+      - example-postgres
+    networks:
+      - example-postgres-network
+
+networks:
+  example-postgres-network:
+    driver: bridge
